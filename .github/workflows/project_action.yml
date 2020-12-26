@@ -1,4 +1,4 @@
-name: Action for project
+name: Build Status
 
 on:
   push:
