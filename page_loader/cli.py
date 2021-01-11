@@ -1,3 +1,4 @@
+import os
 import argparse
 
 
@@ -23,7 +24,7 @@ def take_apart_params():
         '--output',
         metavar='[dir]',
         type=str,
-        default='/app',
+        default=os.getcwd() + os.sep + 'app',
         help='output dir (defoult: "/app")',
     )
     option_group.add_argument(
