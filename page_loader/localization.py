@@ -1,31 +1,61 @@
 import os
+import logging
+import functools
 from bs4 import BeautifulSoup
-from page_loader.io import make_dir, make_source_name, make_url
+from page_loader import make
 
 
+LOGGER = logging.getLogger('main.page_loader.localization')
+
+
+def logging_localization(func):
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        LOGGER.info('Start page localization')
+        func(*args, **kwargs)
+        LOGGER.info('Finish page localization')
+
+    return wrapper
+
+
+@logging_localization
 def localize(source):
+    """
+    localize(page_metadata):
+    Search on the downloaded page for internal links (images, css, js-scripts),
+    form lists of internal links for loading.
+    """
     html_filename = source['dir'] + source['file']
     with open(html_filename, 'rb') as content:
         soup = BeautifulSoup(content, 'lxml')
     source['sub_dir_name'] = source['name'] + '_files'
-    source['sub_dir_path'] = make_dir(source['dir'] + source['sub_dir_name'])
+    sub_dir_path = make.directory(source['dir'] + source['sub_dir_name'])
+    source['sub_dir_path'] = sub_dir_path
     tags = [('img', 'src'), ('link', 'href'), ('script', 'src')]
     for tag, sub_tug in tags:
         links = soup.find_all(tag)
         if links is not None:
             page_key = tag + '_links'
             source[page_key] = replace_urls(links, source, sub_tug)
+            LOGGER.info(f'Sources -{tag}- was localized')
     with open(html_filename, 'w', encoding='utf-8') as content:
         content.write(soup.prettify(formatter='html5'))
 
 
 def replace_urls(sub_links, source, sub_tag):
+    """
+    replace_url(list_internal_lincs, page_metadata, source_as_subtug):
+    Replace internal links with local pathes,
+    form pairs (link, name of the local file)
+    for subsequent download.
+    """
     pares_for_load = []
     for link in sub_links:
         sub_tag_value = link.get(sub_tag)
-        sub_url = make_url(source['url'], sub_tag_value)
+        sub_url = make.current_url(source['url'], sub_tag_value)
         if sub_url is not None:
-            sub_name = make_source_name(sub_url)
+            sub_name = make.current_name(sub_url)
             link[sub_tag] = source['sub_dir_name'] + os.sep + sub_name
             pares_for_load.append((sub_url, source['sub_dir_path'] + sub_name))
     return pares_for_load
