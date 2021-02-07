@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 import functools
 from bs4 import BeautifulSoup
@@ -27,18 +28,26 @@ def localize(source):
     form lists of internal links for loading.
     """
     html_filename = source['dir'] + source['file']
-    with open(html_filename, 'rb') as content:
-        soup = BeautifulSoup(content, 'lxml')
+    try:
+        with open(html_filename, 'rb') as content:
+            soup = BeautifulSoup(content, 'lxml')
+    except IOError:
+        LOGGER.error(f'File {html_filename} not open /not found')
+        sys.stderr.write(f'File {html_filename} not open / not found\n')
+        raise
     source['sub_dir_name'] = source['name'] + '_files'
-    sub_dir_path = make.directory(source['dir'] + source['sub_dir_name'])
-    source['sub_dir_path'] = sub_dir_path
+    source['sub_dir_path'] = make.directory(
+        source['dir'] + source['sub_dir_name'],
+        log_level='main.page_loader.localization')
     tags = [('img', 'src'), ('link', 'href'), ('script', 'src')]
     for tag, sub_tug in tags:
         links = soup.find_all(tag)
         if links is not None:
-            page_key = tag + '_links'
+            page_key = tag + 's'
             source[page_key] = replace_urls(links, source, sub_tug)
             LOGGER.info(f'Sources -{tag}- was localized')
+        else:
+            LOGGER.info(f'Sources -{tag}- not found')
     with open(html_filename, 'w', encoding='utf-8') as content:
         content.write(soup.prettify(formatter='html5'))
 

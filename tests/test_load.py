@@ -70,3 +70,20 @@ def test_loaded_sources(fixture_source_mock, expect, result):
     with open(path, mode) as source_file:
         resulting = source_file.read()
     assert resulting == expected
+
+
+@pytest.mark.xfail
+def test_negative_url():
+    url = 'test://not.url'
+    path = tempfile.gettempdir()
+    expacted = tempfile.gettempdir() + os.sep + 'test-not-url.html'
+    assert download(url, path) == expacted
+
+
+@pytest.mark.xfail
+@requests_mock.Mocker(kw='m')
+def test_negative_path(**kwargs):
+    mock_source = kwargs['m']
+    mock_source.get('mock://test.com', text='test_text')
+    path = '/'
+    download('mock://test.com', path)

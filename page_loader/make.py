@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from urllib import parse
 
@@ -23,11 +24,17 @@ def current_name(url):
     return '-'.join(source_name)
 
 
-def directory(user_path):
-    logger = logging.getLogger('main.page_loader.make_dir')
-    if not os.path.exists(user_path):
-        os.makedirs(user_path)
-        logger.info(f'Creating dir {user_path}')
-    else:
-        logger.info(f'Dir "{user_path}" already exists')
-    return user_path + os.sep
+def directory(user_path, log_level='main.page_loader'):
+    logger = logging.getLogger(log_level + '.make_dir')
+    try:
+        if not os.path.exists(user_path):
+            os.makedirs(user_path)
+            logger.info(f'Creating dir {user_path}')
+        else:
+            logger.info(f'Dir "{user_path}" already exists')
+        return user_path + os.sep
+    except OSError:
+        err_msg = f'Impossible to create a directory -> {user_path}'
+        logger.error(err_msg)
+        sys.stderr.write(err_msg + '\n')
+        raise
