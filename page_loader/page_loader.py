@@ -1,6 +1,7 @@
 import sys
 import requests
 import logging
+from progress.bar import Bar
 from page_loader.localization import localize
 from page_loader import make
 
@@ -19,12 +20,10 @@ def download(url, user_path):
         logger.error(f'Bad user path: {user_path}')
         raise
     path_to_file = page['dir'] + page['file']
-    #
     try:
         load(page['url'], path_to_file)
     except Exception:
         raise
-    #
     try:
         localize(page)
     except Exception:
@@ -33,13 +32,17 @@ def download(url, user_path):
     for tag in ('imgs', 'links', 'scripts'):
         if page.get(tag) is not None:
             count_sources = 0
+            bar_limit = len(page[tag])
+            bar = Bar(f'Loading {tag}', suffix='%(percent)d%%', max=bar_limit)
             for source_url, source_file in page[tag]:
                 try:
                     load(source_url, source_file)
                     count_sources += 1
+                    bar.next()
                 except Exception:
                     logger.error(f'{source_url} not loaded')
                     continue
+            bar.finish()
             logger.info(f'-{tag}- loaded {count_sources} files')
         else:
             logger.info(f'Sources -{tag}- not found')

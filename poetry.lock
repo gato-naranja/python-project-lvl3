@@ -148,6 +148,14 @@ version = "0.13.1"
 dev = ["pre-commit", "tox"]
 
 [[package]]
+category = "main"
+description = "Easy to use progress bars"
+name = "progress"
+optional = false
+python-versions = "*"
+version = "1.5"
+
+[[package]]
 category = "dev"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
 name = "py"
@@ -288,7 +296,7 @@ secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "cer
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "014ac525634688cf16babcde338f9928ef085aad47580b25e2c370560707439c"
+content-hash = "5ad7c8b9c868fe05208a524c8acb870bf6ffbea95d8e5ae53967b79654831069"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -415,6 +423,9 @@ packaging = [
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
+]
+progress = [
+    {file = "progress-1.5.tar.gz", hash = "sha256:69ecedd1d1bbe71bf6313d88d1e6c4d2957b7f1d4f71312c211257f7dae64372"},
 ]
 py = [
     {file = "py-1.10.0-py2.py3-none-any.whl", hash = "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"},
