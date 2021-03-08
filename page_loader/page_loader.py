@@ -1,4 +1,3 @@
-import sys
 import requests
 import logging
 from progress.bar import Bar
@@ -74,10 +73,9 @@ def load(url, path):
         logger.info(f'Load {url}')
         try:
             response = session.get(url)
-        except Exception:
-            err = sys.exc_info()[1]
-            logger.error(f'Page not loaded: {url}\n{err}')
-            raise
+        except Exception as err:
+            logger.error(f'GET-request for {url} failed. Details:\n{err}')
+            raise Exception(f'loading error -> GET-request for {url} failed')
         if response.status_code == 200:
             logger.info(f'Loading complete, code {response.status_code}')
         elif response.status_code in range(201, 400):

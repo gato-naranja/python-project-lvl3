@@ -24,9 +24,9 @@ def main():
         path_local_html = download(args.url, args.output)
         logger.info('Download of page was COMPLETED')
         print(path_local_html)
-    except Exception:
+    except Exception as err:
         logger.error(f'Loader error! Loading {args.url} was fail.')
-        sys.stderr.write(f'\nGet error: {sys.exc_info()[1]}\n')
+        sys.stderr.write(f'Get error: {err}\n')
         sys.exit(1)
 
 
