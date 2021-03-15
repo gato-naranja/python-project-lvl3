@@ -12,7 +12,7 @@ installation example
 
 <a href="https://asciinema.org/a/FQNfrqgBc0syCzdQ2aAwyMl3O" target="_blank"><img src="https://asciinema.org/a/FQNfrqgBc0syCzdQ2aAwyMl3O.svg" /></a>
 
-### PAGE LOADING 
+### PAGE LOADER PERFORMANCE
 To load the page to a local file you need to:
 ```
 page-loader -o my_dir http://you.url
