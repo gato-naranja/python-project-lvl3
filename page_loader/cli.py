@@ -24,8 +24,8 @@ def take_apart_params():
         '--output',
         metavar='[dir]',
         type=str,
-        default=os.getcwd() + os.sep + 'app',
-        help='output dir (defoult: "/app")',
+        default=os.getcwd(),
+        help=f'output dir (defoult: {os.getcwd})',
     )
     option_group.add_argument(
         '-h',

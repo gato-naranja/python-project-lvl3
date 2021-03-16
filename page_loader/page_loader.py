@@ -1,3 +1,4 @@
+import os
 import requests
 import logging
 from progress.bar import Bar
@@ -15,8 +16,8 @@ def download(url, user_path):
     logger = logging.getLogger('main.page_loader')
     try:
         page = make_page_meta(url, user_path)
-    except Exception:
-        logger.error(f'Bad user path: {user_path}')
+    except Exception as err:
+        logger.error(err.__str__)
         raise
     path_to_file = page['dir'] + page['file']
     try:
@@ -51,14 +52,12 @@ def download(url, user_path):
 
 def make_page_meta(url, user_path):
     name = make.current_name(url)
-    try:
-        work_dir = make.directory(user_path)
-    except Exception:
-        raise
+    if not os.path.exists(user_path):
+        raise Exception(f'Bad directory path: {user_path}')
     return {
         'name': name,
         'url': url,
-        'dir': work_dir,
+        'dir': user_path + os.sep,
         'file': name + '.html',
     }
 

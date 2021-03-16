@@ -26,15 +26,15 @@ def current_name(url):
 
 def directory(user_path, log_level='main.page_loader'):
     logger = logging.getLogger(log_level + '.make_dir')
-    try:
-        if not os.path.exists(user_path):
+    if not os.path.exists(user_path):
+        try:
             os.makedirs(user_path)
-            logger.info(f'Creating dir {user_path}')
-        else:
-            logger.info(f'Dir "{user_path}" already exists')
-        return user_path + os.sep
-    except OSError:
-        err_msg = f'Impossible to create a directory -> {user_path}'
-        logger.error(err_msg)
-        sys.stderr.write(err_msg + '\n')
-        raise
+        except OSError:
+            err_msg = f'Impossible to create a directory -> {user_path}'
+            logger.error(err_msg)
+            sys.stderr.write(err_msg + '\n')
+            raise Exception('Directory make error')
+        logger.info(f'Creating dir {user_path}')
+    else:
+        logger.info(f'Dir "{user_path}" already exists')
+    return user_path + os.sep

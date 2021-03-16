@@ -72,13 +72,13 @@ def test_loaded_sources(fixture_source_mock, fixture_tempdir, expect, result):
     assert resulting == expected
 
 
-@pytest.mark.xfail
 @requests_mock.Mocker(kw='m')
 def test_negative_path(**kwargs):
     mock_source = kwargs['m']
     mock_source.get('mock://test.com', text='test_text')
     path = '/'
-    download('mock://test.com', path)
+    with pytest.raises(Exception):
+        download('mock://test.com', path)
 
 
 @pytest.mark.parametrize('code', [404, 500])
