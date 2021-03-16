@@ -82,6 +82,7 @@ def load(url, path):
             logger.info(f'Response code: {response.status_code}')
         else:
             logger.error(f'Page not loaded. Code {response.status_code}')
+            raise Exception(response.status_code)
         try:
             with open(path, 'wb') as source_file:
                 source_file.write(response.content)
