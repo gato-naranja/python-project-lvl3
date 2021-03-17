@@ -65,6 +65,8 @@ def replace_urls(sub_links, source, sub_tag):
         sub_url = make.current_url(source['url'], sub_tag_value)
         if sub_url is not None:
             sub_name = make.current_name(sub_url)
+            if len(sub_name.split('.')) == 1:
+                sub_name += '.html'
             link[sub_tag] = source['sub_dir_name'] + os.sep + sub_name
             pares_for_load.append((sub_url, source['sub_dir_path'] + sub_name))
     return pares_for_load
