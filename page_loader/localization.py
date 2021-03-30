@@ -1,72 +1,60 @@
 import os
-import sys
 import logging
-import functools
 from bs4 import BeautifulSoup
 from page_loader import make
 
 
-LOGGER = logging.getLogger('main.page_loader.localization')
+TAGS = [('img', 'src'), ('link', 'href'), ('script', 'src')]
 
 
-def logging_localization(func):
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        LOGGER.info('Start page localization')
-        func(*args, **kwargs)
-        LOGGER.info('Finish page localization')
-
-    return wrapper
-
-
-@logging_localization
-def localize(source):
+def localize(url, source_content, source_name, source_dir):
     """
-    localize(page_metadata):
+    localize(url, downloaded_page, page_name, path_to_load):
     Search on the downloaded page for internal links (images, css, js-scripts),
     form lists of internal links for loading.
     """
-    html_filename = source['dir'] + source['file']
-    try:
-        with open(html_filename, 'rb') as content:
-            soup = BeautifulSoup(content, 'lxml')
-    except IOError:
-        LOGGER.error(f'File {html_filename} not open /not found')
-        sys.stderr.write(f'File {html_filename} not open / not found\n')
-        raise
-    source['sub_dir_name'] = source['name'] + '_files'
-    source['sub_dir_path'] = make.directory(
-        source['dir'] + source['sub_dir_name'],
+    logger = logging.getLogger('main.page_loader.localization')
+    logger.info('Start page localization')
+    soup = BeautifulSoup(source_content, 'lxml')
+    sub_dir_name = source_name + '_files'
+    sub_dir_path = make.directory(
+        source_dir + os.sep + sub_dir_name,
         log_level='main.page_loader.localization')
-    tags = [('img', 'src'), ('link', 'href'), ('script', 'src')]
-    for tag, sub_tug in tags:
+    sub_meta = (sub_dir_name, sub_dir_path)
+    sources_for_load = {}
+    for tag, sub_tug in TAGS:
         links = soup.find_all(tag)
         if links is not None:
             page_key = tag + 's'
-            source[page_key] = replace_urls(links, source, sub_tug)
-            LOGGER.info(f'Sources -{tag}- was localized')
+            sources_for_load[page_key] = replace_urls(
+                url,
+                links,
+                sub_tug,
+                sub_meta,
+                )
+            logger.info(f'Sources -{tag}- was localized')
         else:
-            LOGGER.info(f'Sources -{tag}- not found')
-    with open(html_filename, 'w', encoding='utf-8') as content:
-        content.write(soup.prettify(formatter='html5'))
+            logger.info(f'Sources -{tag}- not found')
+    logger.info('Finish page localization')
+    return soup.prettify(formatter='html5'), sources_for_load
 
 
-def replace_urls(sub_links, source, sub_tag):
+def replace_urls(url, sub_links, sub_tag, sub_meta):
     """
-    replace_url(list_internal_lincs, page_metadata, source_as_subtug):
+    replace_url(original_url, list_of_links, tag_in_link, name_&_path):
     Replace internal links with local pathes,
     form pairs (link, name of the local file)
     for subsequent download.
     """
+    name, path = sub_meta
     pares_for_load = []
     for link in sub_links:
         sub_tag_value = link.get(sub_tag)
-        sub_url = make.current_url(source['url'], sub_tag_value)
+        sub_url = make.current_url(url, sub_tag_value)
         if sub_url is not None:
             sub_name = make.current_name(sub_url)
             if len(sub_name.split('.')) == 1:
                 sub_name += '.html'
-            link[sub_tag] = source['sub_dir_name'] + os.sep + sub_name
-            pares_for_load.append((sub_url, source['sub_dir_path'] + sub_name))
+            link[sub_tag] = name + os.sep + sub_name
+            pares_for_load.append((sub_url, path + sub_name))
     return pares_for_load
