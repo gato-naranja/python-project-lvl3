@@ -39,7 +39,10 @@ def test_page_download(fixture_tempdir, **kwargs):
     mock_source = kwargs['m']
     mock_source.get('mock://test.com', text='test_text')
     loaded_file = download('mock://test.com', fixture_tempdir)
-    expected = BeautifulSoup(requests.get('mock://test.com').content, 'lxml')
+    expected = BeautifulSoup(
+        requests.get('mock://test.com').content,
+        'html.parser',
+        )
     with open(loaded_file, 'r', encoding='utf-8') as file:
         resulting = file.read()
     assert resulting == expected.prettify(formatter='html5')

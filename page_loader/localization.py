@@ -15,7 +15,7 @@ def localize(url, source_content, source_name, source_dir):
     """
     logger = logging.getLogger('main.page_loader.localization')
     logger.info('Start page localization')
-    soup = BeautifulSoup(source_content, 'lxml')
+    soup = BeautifulSoup(source_content, 'html.parser')
     sub_dir_name = source_name + '_files'
     sub_dir_path = make.directory(
         source_dir + os.sep + sub_dir_name,
