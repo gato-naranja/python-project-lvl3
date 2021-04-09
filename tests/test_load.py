@@ -42,7 +42,7 @@ def test_page_download(fixture_tempdir, **kwargs):
     expected = BeautifulSoup(
         requests.get('mock://test.com').content,
         'html.parser',
-        )
+    )
     with open(loaded_file, 'r', encoding='utf-8') as file:
         resulting = file.read()
     assert resulting == expected.prettify(formatter='html5')

@@ -24,7 +24,7 @@ def current_name(url):
     return '-'.join(source_name)
 
 
-def directory(user_path, log_level='main.page_loader'):
+def directory(user_path, log_level='main'):
     logger = logging.getLogger(log_level + '.make_dir')
     if not os.path.exists(user_path):
         try:
@@ -37,4 +37,3 @@ def directory(user_path, log_level='main.page_loader'):
         logger.info(f'Creating dir {user_path}')
     else:
         logger.info(f'Dir "{user_path}" already exists')
-    return user_path + os.sep

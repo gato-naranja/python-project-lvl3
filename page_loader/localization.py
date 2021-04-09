@@ -17,9 +17,7 @@ def localize(url, source_content, source_name, source_dir):
     logger.info('Start page localization')
     soup = BeautifulSoup(source_content, 'html.parser')
     sub_dir_name = source_name + '_files'
-    sub_dir_path = make.directory(
-        source_dir + os.sep + sub_dir_name,
-        log_level='main.page_loader.localization')
+    sub_dir_path = source_dir + os.sep + sub_dir_name + os.sep
     sub_meta = (sub_dir_name, sub_dir_path)
     sources_for_load = {}
     for tag, sub_tug in TAGS:
@@ -31,10 +29,15 @@ def localize(url, source_content, source_name, source_dir):
                 links,
                 sub_tug,
                 sub_meta,
-                )
+            )
             logger.info(f'Sources -{tag}- was localized')
         else:
             logger.info(f'Sources -{tag}- not found')
+    if sources_for_load != {}:
+        make.directory(
+            sub_dir_path,
+            log_level='main.page_loader.localization'
+        )
     logger.info('Finish page localization')
     return soup.prettify(formatter='html5'), sources_for_load
 

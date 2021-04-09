@@ -28,7 +28,7 @@ def download(url, user_path):
             page_content,
             source_name,
             user_path,
-            )
+        )
         path_to_file = user_path + os.sep + source_name + '.html'
         save_page(localized_page, path_to_file, 'w', 'utf-8')
     except Exception:
