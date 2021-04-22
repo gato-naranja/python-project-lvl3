@@ -1,9 +1,11 @@
 import os
+import tempfile
+
+import pytest
 import requests
 import requests_mock
-import tempfile
-import pytest
 from bs4 import BeautifulSoup
+
 from page_loader import download
 
 
@@ -67,7 +69,7 @@ def test_loaded_sources(fixture_source_mock, fixture_tempdir, expect, result):
         expected = img_file.read()
     html_path = fixture_source_mock
     with open(html_path, 'rb') as page:
-        soup = BeautifulSoup(page, 'lxml')
+        soup = BeautifulSoup(page, 'html.parser')
     tag, sub_tag, mode = result
     path = fixture_tempdir + os.sep + soup.find(tag)[sub_tag]
     with open(path, mode) as source_file:
