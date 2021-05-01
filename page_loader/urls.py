@@ -13,7 +13,7 @@ def to_name(url, ext=False):
     return name
 
 
-def transform(url, internal_link):
+def absolutize(url, internal_link):
     page_url = parse.urlparse(url)
     sub_url = parse.urlparse(internal_link)
     if sub_url.netloc == page_url.netloc:

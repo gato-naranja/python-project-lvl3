@@ -1,24 +1,18 @@
+import os
 import logging
 
-import requests
-from progress.bar import Bar
+
+def save(content, path):
+    file_mode = 'wb' if isinstance(content, bytes) else 'w'
+    enc = 'utf-8' if file_mode == 'w' else None
+    with open(path, file_mode, encoding=enc) as file:
+        file.write(content)
+    logging.info('Saved')
 
 
-def fill(main_path, paths_and_links):
-    bar_limit = len(paths_and_links)
-    mark = ''
-    bar = Bar(f'Loading {mark}', suffix='%(percent)d%%', max=bar_limit)
-    for path, link in paths_and_links:
-        mark = path.split('/')[-1]
-        path_for_save = main_path + path
-        source = requests.get(link)
-        if source.ok:
-            logging.info(f'Source {link} was load')
-            with open(path_for_save, 'wb') as file:
-                file.write(source.content)
-            logging.info(f'It was save to {path_for_save}')
-        else:
-            logging.warning(
-                f'Source {link} not load. Code: {source.status_code}',
-            )
-        bar.next()
+def create(*args):
+    parts_of_path = list(args)
+    path = os.sep.join(parts_of_path)
+    if not os.path.exists(path):
+        os.mkdir(path)
+        logging.info(f'Created {path}')
